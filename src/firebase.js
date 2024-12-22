@@ -1,6 +1,8 @@
 import { initializeApp } from "firebase/app";
 import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { addDoc, collection, getFirestore } from "firebase/firestore";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css"; 
 
 const firebaseConfig = {
   apiKey: "AIzaSyAGFs5XUPGi1IN2ho5yQaxmQk44_5B8Srg",
@@ -20,7 +22,7 @@ const signup = async (name, email, password) => {
         const res = await createUserWithEmailAndPassword(auth, email, password);
         const user = res.user;
 
-        // user details in Firestore
+        // Save user details in Firestore
         await addDoc(collection(db, "user"), {
             uid: user.uid,
             name,
@@ -28,15 +30,16 @@ const signup = async (name, email, password) => {
             email,
         });
 
-        window.location.href = "/home" // Redirect to home page after signup
+        toast.success("Signup successful! Redirecting to home...");
+        window.location.href = "/home"; // Redirect to home page after signup
     } catch (error) {
-        console.error("Signup Error:", error.code, error.message);
+        toast.error("Signup Error:", error.code, error.message);
 
         if (error.code === "auth/email-already-in-use") {
-            alert("This email is already registered. Please log in instead.");
+            toast.error("This email is already registered. Please log in instead.");
             window.location.href = "/login"; // Redirect to login page
         } else {
-            alert("Signup failed. Please try again.");
+            toast.error("Signup failed. Please try again.");
         }
     }
 };
@@ -46,18 +49,19 @@ const login = async (email, password) => {
         const res = await signInWithEmailAndPassword(auth, email, password);
         const user = res.user;
 
+        console.log(`Welcome back, ${user.email}`);
+        toast.success("Login successful! Redirecting to home...");
         window.location.href = "/home"; // Redirect to home page after login
-        alert(`Welcome back, ${user.email}`)
     } catch (error) {
-        console.error("Login Error:", error.code, error.message);
+        toast.error("Login Error:", error.code, error.message);
 
         if (error.code === "auth/user-not-found") {
-            alert("No user found with this email. Please sign up.");
+            toast.error("No user found with this email. Please sign up.");
             window.location.href = "/signup"; // Redirect to signup page
         } else if (error.code === "auth/wrong-password") {
-            alert("Incorrect password. Please try again.");
+            toast.error("Incorrect password. Please try again.");
         } else {
-            alert("Login failed. Please try again.");
+            toast.error("Login failed. Please try again.");
         }
     }
 };
@@ -65,12 +69,12 @@ const login = async (email, password) => {
 const logout = async () => {
     try {
         await signOut(auth);
+        toast.success("Logout successful! Redirecting to login...");
         window.location.href = "/login"; // Redirect to login page after logout
     } catch (error) {
         console.error("Logout Error:", error.message);
-        alert("Error logging out. Please try again.");
+        toast.error("Error logging out. Please try again.");
     }
 };
 
-
-export {auth, db, login, signup, logout}
+export { auth, db, login, signup, logout };
