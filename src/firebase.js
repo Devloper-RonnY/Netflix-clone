@@ -5,13 +5,14 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"; 
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAGFs5XUPGi1IN2ho5yQaxmQk44_5B8Srg",
-  authDomain: "netflix-clone-7fd55.firebaseapp.com",
-  projectId: "netflix-clone-7fd55",
-  storageBucket: "netflix-clone-7fd55.firebasestorage.app",
-  messagingSenderId: "189571993593",
-  appId: "1:189571993593:web:34e8af42f5ef9eed917728"
-};
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+    appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  };
+  
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -30,7 +31,6 @@ const signup = async (name, email, password) => {
             email,
         });
 
-        toast.success("Signup successful! Redirecting to home...");
         window.location.href = "/home"; // Redirect to home page after signup
     } catch (error) {
         toast.error("Signup Error:", error.code, error.message);
@@ -49,22 +49,22 @@ const login = async (email, password) => {
         const res = await signInWithEmailAndPassword(auth, email, password);
         const user = res.user;
 
-        console.log(`Welcome back, ${user.email}`);
-        toast.success("Login successful! Redirecting to home...");
+        toast.success(`Welcome back, ${user.email}! Redirecting...`, { toastId: "login-success" });
         window.location.href = "/home"; // Redirect to home page after login
     } catch (error) {
-        toast.error("Login Error:", error.code, error.message);
+        toast.error("Error Code:", error.code); // Debugging: Log the error code
+        console.log("Error Message:", error.message); // Debugging: Log the error message
 
         if (error.code === "auth/user-not-found") {
-            toast.error("No user found with this email. Please sign up.");
-            window.location.href = "/signup"; // Redirect to signup page
+            toast.error("No user found with this email. Please sign up.", { toastId: "user-not-found" });
         } else if (error.code === "auth/wrong-password") {
-            toast.error("Incorrect password. Please try again.");
+            toast.error("Incorrect password. Please try again.", { toastId: "wrong-password" });
         } else {
-            toast.error("Login failed. Please try again.");
+            toast.error(`Login failed: ${error.message}`, { toastId: "login-error" });
         }
     }
 };
+
 
 const logout = async () => {
     try {
@@ -77,4 +77,4 @@ const logout = async () => {
     }
 };
 
-export { auth, db, login, signup, logout };
+export { auth, db, login, signup, logout,};

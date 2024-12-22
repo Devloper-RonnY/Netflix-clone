@@ -16,7 +16,7 @@ function App() {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
       navigate(currentUser ? '/' : '/login');
-      toast[currentUser ? 'success' : 'info'](currentUser ? "Welcome back!" : 'Please log in.');
+      toast(currentUser ? `Welcome back!` : 'Please log in.');
     });
     return unsubscribe;
   }, [navigate]);
