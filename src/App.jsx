@@ -13,19 +13,27 @@ function App() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
+    const toastId = 'auth-toast'; // Unique ID for the toast
+  
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
+  
       if (currentUser) {
-        toast.success('Welcome back!');
+        if (!toast.isActive(toastId)) {
+          toast.success('Welcome back!', { toastId });
+        }
         navigate('/');
       } else {
-        toast.info('Please log in.');
+        if (!toast.isActive(toastId)) {
+          toast.info('Please log in.', { toastId });
+        }
         navigate('/login');
       }
     });
-
-    return unsubscribe; // Cleanup the listener on component unmount
+  
+    return () => unsubscribe(); // Cleanup the listener on component unmount
   }, [navigate]);
+  
 
   return (
     <div>
