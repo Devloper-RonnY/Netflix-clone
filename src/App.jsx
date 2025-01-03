@@ -15,10 +15,16 @@ function App() {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
-      navigate(currentUser ? '/' : '/login');
-      toast(currentUser ? `Welcome back!` : 'Please log in.');
+      if (currentUser) {
+        toast.success('Welcome back!');
+        navigate('/');
+      } else {
+        toast.info('Please log in.');
+        navigate('/login');
+      }
     });
-    return unsubscribe;
+
+    return unsubscribe; // Cleanup the listener on component unmount
   }, [navigate]);
 
   return (

@@ -12,22 +12,12 @@ const Login = () => {
 
   const user_auth = async (e) => {
     e.preventDefault();
-    if (signState === "Sign In") {
-      try {
-        await login(email, password);
-        window.location.href = "/home"; 
-      } catch (error) {
-        alert("Login failed. Please try again.", error);
-      }
-    } else if (signState === "Sign Up") {
-      try {
-        await signup(name, email, password);
-        window.location.href = "/home";
-      } catch (error) {
-        alert("Loginout failed. Please try again.", error);
-      }
+    if(signState === "Sign In"){
+      await login(email, password);
+    } else {
+      await signup(name, email, password)
     }
-  };
+  }
 
   return (
     <div className='login'>
